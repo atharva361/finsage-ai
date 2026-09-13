@@ -248,7 +248,15 @@
           <h1 class="dashboard-title">📊 Financial Dashboard</h1>
           <p class="dashboard-sub">12-month cash flow projection · Health score · Purchase planner</p>
         </div>
-        <button class="btn btn-ghost btn-sm" id="btn-reset">↩ Start Over</button>
+        <div style="display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center;">
+          <button class="btn btn-secondary btn-sm" id="btn-export-profile" title="Download full financial profile as CSV">
+            📥 Export Profile CSV
+          </button>
+          <button class="btn btn-secondary btn-sm" id="btn-export-cashflow" title="Download 12-month cash flow as CSV">
+            📊 Export Cash Flow CSV
+          </button>
+          <button class="btn btn-ghost btn-sm" id="btn-reset">↩ Start Over</button>
+        </div>
       </div>
 
       <!-- Metrics row -->
@@ -424,8 +432,15 @@
 
         <!-- Scenarios -->
         <div id="scenarios-section" class="hidden">
-          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:0.25rem;">Scenario Comparison</h3>
-          <p style="color:var(--text-secondary); font-size:0.82rem; margin-bottom:1.25rem;">Each card shows a 12-month balance projection, safety score, and key metrics for that payment strategy.</p>
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem; margin-bottom:0.75rem;">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:0.2rem;">Scenario Comparison</h3>
+              <p style="color:var(--text-secondary); font-size:0.82rem;">Each card shows a 12-month balance projection, safety score, and key metrics.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="btn-export-scenarios" title="Download scenario comparison as CSV">
+              📥 Export Scenarios CSV
+            </button>
+          </div>
           <div class="scenarios-grid" id="scenarios-grid"></div>
         </div>
 

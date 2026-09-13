@@ -962,6 +962,145 @@ function switchTab(btn) {
   });
 }
 
+// ─── CSV Export Utilities ────────────────────────────────────────────────────
+function csvCell(v) {
+  const s = String(v ?? '');
+  return /[,"\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+function csvRow(arr) { return arr.map(csvCell).join(','); }
+
+function downloadCSV(filename, rows) {
+  const csv  = rows.map(csvRow).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }); // BOM for Excel
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+  toast(`Downloaded ${filename}`, 'success');
+}
+
+/** Export 1: 12-Month Cash Flow Projection */
+function exportCashFlowCSV() {
+  if (!state.projection.length) { toast('Run your analysis first', 'error'); return; }
+  const p = state.profile;
+  const rows = [];
+
+  rows.push(['FinSage AI — 12-Month Cash Flow Projection']);
+  rows.push(['Generated', new Date().toLocaleString('en-IN')]);
+  rows.push([]);
+  rows.push(['=== Financial Profile ===']);
+  rows.push(['Monthly Income (Take-home)', p.incomeMonthly]);
+  rows.push(['Other Monthly Income',       p.otherIncome]);
+  rows.push(['Total Monthly Expenses',     p.totalExpenses]);
+  rows.push(['Total Debt EMIs',            p.totalDebtEMI]);
+  rows.push(['Monthly Net Cash Flow',      p.monthlyNet]);
+  rows.push(['Current Savings Balance',    p.savingsBalance]);
+  rows.push(['Savings Rate (%)',           p.savingsRate.toFixed(2)]);
+  rows.push(['Debt-to-Income Ratio (%)',   p.debtRatio.toFixed(2)]);
+  rows.push(['Emergency Fund (months)',    p.emergencyFundMonths.toFixed(2)]);
+  rows.push([]);
+  rows.push(['=== Expense Breakdown ===']);
+  rows.push(['Category', 'Monthly Amount (INR)']);
+  (p.expenses || []).forEach(e => rows.push([e.name, e.amount]));
+  if (p.totalDebtEMI > 0) rows.push(['Debt EMIs (total)', p.totalDebtEMI]);
+  rows.push([]);
+  rows.push(['=== Monthly Projection ===']);
+  rows.push(['Month', 'Projected Income (INR)', 'Projected Expenses (INR)',
+             'Net Cash Flow (INR)', 'Savings Balance (INR)', 'Emergency Fund Cover (months)']);
+  state.projection.forEach(m => {
+    rows.push([m.label, m.income, m.expenses, m.net, m.balance,
+               m.efCoverage >= 99 ? 'Unlimited' : m.efCoverage]);
+  });
+
+  downloadCSV('finsage_cashflow_projection.csv', rows);
+}
+
+/** Export 2: Scenario Comparison */
+function exportScenariosCSV() {
+  if (!state.scenarios.length) { toast('Run Purchase Scenario Analysis first', 'error'); return; }
+  const goal = state.purchaseGoal;
+  const rows = [];
+
+  rows.push(['FinSage AI — Purchase Scenario Comparison']);
+  rows.push(['Generated', new Date().toLocaleString('en-IN')]);
+  rows.push(['Purchase', goal?.name ?? '']);
+  rows.push(['Purchase Amount (INR)', goal?.amount ?? '']);
+  rows.push([]);
+  rows.push(['=== Scenario Comparison ===']);
+  rows.push(['Scenario','Description','Monthly Cost (INR)','Total Cost (INR)',
+             'Total Interest (INR)','Balance After (INR)','12-Month Balance (INR)',
+             'Emergency Fund After (months)','Safety Score (/100)','Risk Level']);
+
+  state.scenarios.forEach(sc => {
+    rows.push([
+      sc.title.replace(/[^\w\s&-]/g, '').trim(), sc.desc,
+      sc.monthlyCost, sc.totalCost, sc.interest ?? 0, sc.balanceAfter,
+      sc.projectedBalance12 ?? '',
+      sc.efMonthsAfter >= 99 ? 'Unlimited' : sc.efMonthsAfter.toFixed(1),
+      sc.risk.score, sc.risk.label,
+    ]);
+  });
+  rows.push([]);
+
+  state.scenarios.forEach(sc => {
+    rows.push([`=== ${sc.title.replace(/[^\w\s&-]/g, '').trim()} — Monthly Detail ===`]);
+    rows.push(['Month','Income (INR)','Expenses (INR)','Net (INR)',
+               'Balance (INR)','EF Cover (months)']);
+    sc.proj.forEach(m => {
+      rows.push([m.label, m.income, m.expenses, m.net, m.balance,
+                 m.efCoverage >= 99 ? 'Unlimited' : m.efCoverage]);
+    });
+    rows.push([]);
+  });
+
+  downloadCSV('finsage_scenario_comparison.csv', rows);
+}
+
+/** Export 3: Full Financial Profile Summary */
+function exportProfileCSV() {
+  if (!Object.keys(state.profile).length) { toast('Complete the wizard first', 'error'); return; }
+  const p = state.profile;
+  const rows = [];
+
+  rows.push(['FinSage AI — Full Financial Profile']);
+  rows.push(['Generated', new Date().toLocaleString('en-IN')]);
+  rows.push([]);
+  rows.push(['=== Income ===']);
+  rows.push(['Monthly Take-Home Income (INR)', p.incomeMonthly]);
+  rows.push(['Other Monthly Income (INR)',      p.otherIncome]);
+  rows.push(['Expected Annual Growth (%)',      p.incomeGrowthPct]);
+  rows.push([]);
+  rows.push(['=== Expenses ===']);
+  rows.push(['Category', 'Monthly Amount (INR)']);
+  (p.expenses || []).forEach(e => rows.push([e.name, e.amount]));
+  rows.push(['Total Monthly Expenses (INR)', p.totalExpenses]);
+  rows.push([]);
+  rows.push(['=== Savings ===']);
+  rows.push(['Current Savings Balance (INR)',   p.savingsBalance]);
+  rows.push(['Monthly Savings Target (INR)',     p.monthlySaving ?? '']);
+  rows.push(['Target Emergency Fund (months)',   p.emergencyTarget]);
+  rows.push(['Current EF Coverage (months)',     p.emergencyFundMonths.toFixed(2)]);
+  rows.push([]);
+  rows.push(['=== Debts ===']);
+  rows.push(['Loan Name', 'Outstanding Balance (INR)', 'Monthly EMI (INR)']);
+  (p.debts || []).forEach(d => rows.push([d.name, d.balance, d.emi]));
+  rows.push(['Total Monthly EMI (INR)', p.totalDebtEMI]);
+  rows.push([]);
+  rows.push(['=== Key Ratios ===']);
+  rows.push(['Monthly Net Cash Flow (INR)',   p.monthlyNet]);
+  rows.push(['Savings Rate (%)',              p.savingsRate.toFixed(2)]);
+  rows.push(['Debt-to-Income Ratio (%)',      p.debtRatio.toFixed(2)]);
+  rows.push(['Financial Health Score (/100)', computeHealthScore(p)]);
+  rows.push([]);
+  rows.push(['=== Goal ===']);
+  rows.push(['Purchase Name',         p.goalName]);
+  rows.push(['Goal Amount (INR)',      p.goalAmount]);
+  rows.push(['Time Horizon (months)',  p.goalMonths]);
+  rows.push(['Risk Tolerance',         p.riskTolerance]);
+
+  downloadCSV('finsage_financial_profile.csv', rows);
+}
+
 // ─── Reset ────────────────────────────────────────────────────────────────────
 function resetApp() {
   Object.keys(state.charts).forEach(k => { state.charts[k]?.destroy(); delete state.charts[k]; });
@@ -995,6 +1134,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Purchase analyzer
   $('#btn-analyze-purchase')?.addEventListener('click', analyzePurchase);
+
+  // CSV exports
+  $('#btn-export-cashflow')?.addEventListener('click', exportCashFlowCSV);
+  $('#btn-export-scenarios')?.addEventListener('click', exportScenariosCSV);
+  $('#btn-export-profile')?.addEventListener('click', exportProfileCSV);
 
   // Reset
   $('#btn-reset')?.addEventListener('click', resetApp);
