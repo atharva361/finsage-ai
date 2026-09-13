@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinSage AI — Cautious Personal Financial Planner</title>
+  <meta name="description" content="FinSage AI gathers your financial data, predicts cash flow, tests multiple payment scenarios, and recommends the safest personalized option for every purchase decision." />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div id="app">
+
+  <!-- ═══ HEADER ═══════════════════════════════════════════════════════════ -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">🧠</div>
+      <div>
+        <div class="logo-text">FinSage AI</div>
+        <div class="logo-sub">Cautious Financial Planner</div>
+      </div>
+    </div>
+    <div class="header-status">
+      <span class="status-dot"></span>
+      Agent Active
+    </div>
+  </header>
+
+  <!-- ═══ VIEWS ════════════════════════════════════════════════════════════ -->
+  <main class="main-content">
+
+    <!-- ─── VIEW: WELCOME ──────────────────────────────────────────────── -->
+    <section id="view-welcome" class="view active">
+      <div class="welcome-hero">
+        <div class="hero-badge">🛡️ AI-Powered · Risk-First · Personalized</div>
+        <h1 class="hero-title">
+          Your <span class="gradient">Financial Agent</span><br>
+          that thinks before you spend
+        </h1>
+        <p class="hero-sub">
+          FinSage gathers your complete financial picture, projects your cash flow 12 months ahead,
+          simulates every payment option, and recommends the <em>safest</em> path — not just the cheapest one.
+        </p>
+        <button class="btn btn-primary btn-lg" id="btn-start">
+          🚀 &nbsp; Start Financial Analysis
+        </button>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Cash Flow Prediction</div>
+          <div class="feature-desc">Projects your income, expenses & savings balance month-by-month for 12 months with inflation & growth adjustments.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔬</div>
+          <div class="feature-title">Scenario Simulation</div>
+          <div class="feature-desc">Tests Lump Sum, EMI, and Deferred-purchase paths simultaneously — seeing exactly how each impacts your future balance.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <div class="feature-title">Risk Scoring</div>
+          <div class="feature-desc">Rates each scenario on emergency-fund coverage, savings rate, debt ratio, and negative-balance risk with a 0–100 safety score.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <div class="feature-title">AI Advisor</div>
+          <div class="feature-desc">Generates personalized, plain-English reasoning about why a specific option is safest for your unique financial profile.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <div class="feature-title">Financial Health Score</div>
+          <div class="feature-desc">Tracks your emergency fund, savings rate, and debt-to-income ratio in a holistic 0–100 score with visual breakdowns.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <div class="feature-title">Privacy First</div>
+          <div class="feature-desc">All data stays local in your browser. Nothing is sent to any server — your financial info is yours alone.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── VIEW: WIZARD ───────────────────────────────────────────────── -->
+    <section id="view-wizard" class="view">
+      <div class="wizard-wrap">
+
+        <!-- Progress -->
+        <div class="progress-bar-wrap">
+          <div class="progress-labels">
+            <span class="progress-label active" data-step="0">Income</span>
+            <span class="progress-label"        data-step="1">Expenses</span>
+            <span class="progress-label"        data-step="2">Savings</span>
+            <span class="progress-label"        data-step="3">Debts</span>
+            <span class="progress-label"        data-step="4">Goals</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- ── Step 0: Income ────────────────────────────────────────── -->
+        <div class="wizard-step active" data-step="0">
+          <div class="step-header">
+            <div class="step-number">Step 1 of 5</div>
+            <h2 class="step-title">💰 Your Income</h2>
+            <p class="step-desc">Tell me what you earn each month. I'll factor in growth to predict your future cash flow accurately.</p>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="income-monthly">Monthly Take-Home Income <span class="required">*</span></label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input class="form-input currency" type="number" id="income-monthly" min="0" placeholder="e.g. 75000" />
+              </div>
+              <div class="form-hint">After tax / net salary credited to bank</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="other-income">Other Monthly Income</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input class="form-input currency" type="number" id="other-income" min="0" placeholder="0" />
+              </div>
+              <div class="form-hint">Freelance, rent, dividends, side income…</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="income-growth">
+                Expected Annual Income Growth: <span id="income-growth-label" style="color:var(--accent-blue); font-weight:700;">5%</span>
+              </label>
+              <input type="range" id="income-growth" min="0" max="30" step="1" value="5" />
+              <div class="form-hint">Conservative estimate is better. Used to project 12-month income curve.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Step 1: Expenses ──────────────────────────────────────── -->
+        <div class="wizard-step" data-step="1">
+          <div class="step-header">
+            <div class="step-number">Step 2 of 5</div>
+            <h2 class="step-title">🧾 Monthly Expenses</h2>
+            <p class="step-desc">List your regular monthly outgoings. Be thorough — missed expenses lead to overconfident recommendations.</p>
+          </div>
+          <div id="expense-rows" class="expense-rows"></div>
+          <button class="add-row-btn mt-2" id="btn-add-expense">
+            ＋ Add expense category
+          </button>
+        </div>
+
+        <!-- ── Step 2: Savings ───────────────────────────────────────── -->
+        <div class="wizard-step" data-step="2">
+          <div class="step-header">
+            <div class="step-number">Step 3 of 5</div>
+            <h2 class="step-title">🏦 Savings & Emergency Fund</h2>
+            <p class="step-desc">Your current savings buffer is critical — it determines how much risk you can safely absorb.</p>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="savings-balance">Current Savings Balance <span class="required">*</span></label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input class="form-input currency" type="number" id="savings-balance" min="0" placeholder="e.g. 200000" />
+              </div>
+              <div class="form-hint">Total liquid savings (bank + FD + liquid MF)</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="monthly-saving">Monthly Savings Target</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input class="form-input currency" type="number" id="monthly-saving" min="0" placeholder="0" />
+              </div>
+              <div class="form-hint">How much you intend to save each month</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="emergency-months">
+                Target Emergency Fund: <span id="emergency-months-label" style="color:var(--accent-teal); font-weight:700;">6 months</span>
+              </label>
+              <input type="range" id="emergency-months" min="1" max="12" step="1" value="6" />
+              <div class="form-hint">Standard advice: 3–6 months of living expenses</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Step 3: Debts ─────────────────────────────────────────── -->
+        <div class="wizard-step" data-step="3">
+          <div class="step-header">
+            <div class="step-number">Step 4 of 5</div>
+            <h2 class="step-title">💳 Existing Debts & Loans</h2>
+            <p class="step-desc">Outstanding loans affect how much new financial load you can safely carry. Include home, car, and personal loans.</p>
+          </div>
+          <div id="debt-rows" class="expense-rows">
+            <div style="color:var(--text-muted); font-size:0.85rem; padding:1rem 0; text-align:center;">
+              No debts? Great! Click below only if you have existing loans.
+            </div>
+          </div>
+          <button class="add-row-btn mt-2" id="btn-add-debt">
+            ＋ Add loan / debt
+          </button>
+        </div>
+
+        <!-- ── Step 4: Goals ─────────────────────────────────────────── -->
+        <div class="wizard-step" data-step="4">
+          <div class="step-header">
+            <div class="step-number">Step 5 of 5</div>
+            <h2 class="step-title">🎯 Purchase Goal & Risk Profile</h2>
+            <p class="step-desc">Tell me what you're planning to buy and how comfortable you are with financial risk. This shapes my recommendation.</p>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="goal-name">What are you planning to buy?</label>
+              <input class="form-input" type="text" id="goal-name" placeholder="e.g. MacBook Pro, Car, Refrigerator" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="goal-amount">Estimated Cost</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input class="form-input currency" type="number" id="goal-amount" min="0" placeholder="e.g. 150000" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="goal-months">Time Horizon (months)</label>
+              <input class="form-input" type="number" id="goal-months" min="1" max="60" value="12" placeholder="12" />
+              <div class="form-hint">How many months are you willing to wait?</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="risk-tolerance">Risk Tolerance</label>
+              <select class="form-select" id="risk-tolerance">
+                <option value="conservative">🛡️ Conservative — Safety above all</option>
+                <option value="moderate" selected>⚖️ Moderate — Balance cost & safety</option>
+                <option value="aggressive">⚡ Aggressive — Optimize for speed</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wizard navigation -->
+        <div class="wizard-nav">
+          <button class="btn btn-ghost" id="btn-prev" style="display:none;">← Back</button>
+          <button class="btn btn-primary" id="btn-next">Next →</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ─── VIEW: DASHBOARD ────────────────────────────────────────────── -->
+    <section id="view-dashboard" class="view">
+
+      <div class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">📊 Financial Dashboard</h1>
+          <p class="dashboard-sub">12-month cash flow projection · Health score · Purchase planner</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="btn-reset">↩ Start Over</button>
+      </div>
+
+      <!-- Metrics row -->
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-icon">💵</div>
+          <div class="metric-label">Monthly Income</div>
+          <div class="metric-value blue" id="dash-income">—</div>
+          <div class="metric-change">Take-home + other</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">🧾</div>
+          <div class="metric-label">Monthly Expenses</div>
+          <div class="metric-value neutral" id="dash-expenses">—</div>
+          <div class="metric-change">Bills + EMIs</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">📈</div>
+          <div class="metric-label">Monthly Net</div>
+          <div class="metric-value" id="dash-net">—</div>
+          <div class="metric-change">Surplus / Deficit</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">🏦</div>
+          <div class="metric-label">Current Savings</div>
+          <div class="metric-value neutral" id="dash-savings">—</div>
+          <div class="metric-change">Liquid balance</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">🛡️</div>
+          <div class="metric-label">Emergency Fund</div>
+          <div class="metric-value amber" id="dash-ef">—</div>
+          <div class="metric-change">Months of coverage</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">💰</div>
+          <div class="metric-label">Savings Rate</div>
+          <div class="metric-value" id="dash-savings-rate">—</div>
+          <div class="metric-change">% of income saved</div>
+        </div>
+      </div>
+
+      <!-- Financial Health + Insights -->
+      <div class="two-col" style="margin-bottom:1.5rem;">
+
+        <div class="card">
+          <div class="card-title">🏆 Financial Health Score</div>
+          <div class="card-sub">Composite score based on emergency fund, savings rate & debt ratio</div>
+          <div class="score-ring-wrap">
+            <div class="score-ring">
+              <svg viewBox="0 0 90 90">
+                <circle class="score-ring-track" cx="45" cy="45" r="35"/>
+                <circle class="score-ring-fill" id="score-ring-fill" cx="45" cy="45" r="35"
+                        stroke-dasharray="220" stroke-dashoffset="220"/>
+              </svg>
+              <div class="score-ring-text">
+                <span class="score-num" id="score-num">—</span>
+                <span class="score-label">/100</span>
+              </div>
+            </div>
+            <div class="score-details">
+              <div class="score-detail-row">
+                <span class="score-detail-label">Emergency Fund</span>
+                <div class="mini-bar-wrap">
+                  <div class="mini-bar-track"><div class="mini-bar-fill green" id="bar-ef-fill" style="width:0%"></div></div>
+                  <span class="mini-bar-val" id="bar-ef-val">—</span>
+                </div>
+              </div>
+              <div class="score-detail-row">
+                <span class="score-detail-label">Savings Rate</span>
+                <div class="mini-bar-wrap">
+                  <div class="mini-bar-track"><div class="mini-bar-fill green" id="bar-sr-fill" style="width:0%"></div></div>
+                  <span class="mini-bar-val" id="bar-sr-val">—</span>
+                </div>
+              </div>
+              <div class="score-detail-row">
+                <span class="score-detail-label">Debt Ratio (inv.)</span>
+                <div class="mini-bar-wrap">
+                  <div class="mini-bar-track"><div class="mini-bar-fill green" id="bar-dr-fill" style="width:0%"></div></div>
+                  <span class="mini-bar-val" id="bar-dr-val">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">💡 Agent Insights</div>
+          <div class="card-sub">Personalized observations about your financial health</div>
+          <div id="insight-list" class="insight-list"></div>
+        </div>
+
+      </div>
+
+      <!-- Charts tabs -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="tabs tab-group-charts">
+          <button class="tab-btn active" data-tab="tab-cashflow" data-group="tab-group-charts">Cash Flow</button>
+          <button class="tab-btn"        data-tab="tab-balance"  data-group="tab-group-charts">Balance Projection</button>
+          <button class="tab-btn"        data-tab="tab-expenses" data-group="tab-group-charts">Expense Breakdown</button>
+          <button class="tab-btn"        data-tab="tab-table"    data-group="tab-group-charts">Monthly Table</button>
+        </div>
+
+        <div id="tab-cashflow" class="tab-panel active">
+          <div class="chart-wrap"><canvas id="chart-cashflow"></canvas></div>
+        </div>
+        <div id="tab-balance" class="tab-panel">
+          <div class="chart-wrap"><canvas id="chart-balance"></canvas></div>
+        </div>
+        <div id="tab-expenses" class="tab-panel">
+          <div class="chart-wrap"><canvas id="chart-donut"></canvas></div>
+        </div>
+        <div id="tab-table" class="tab-panel">
+          <div class="cf-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Income</th>
+                  <th>Expenses</th>
+                  <th>Net Cash Flow</th>
+                  <th>Savings Balance</th>
+                  <th>Emergency Cover</th>
+                </tr>
+              </thead>
+              <tbody id="cf-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Purchase Planner -->
+      <div class="purchase-section">
+        <h2 style="font-size:1.4rem; font-weight:800; margin-bottom:0.4rem; letter-spacing:-0.02em;">🛒 Purchase Scenario Planner</h2>
+        <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:1.5rem;">
+          Enter what you want to buy and I'll test every payment strategy against your actual cash flow — then recommend the safest one.
+        </p>
+
+        <div class="purchase-goal-form">
+          <div class="form-grid form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="purchase-name">Purchase Name</label>
+              <input class="form-input" type="text" id="purchase-name" placeholder="e.g. iPhone 16 Pro" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="purchase-amount">Purchase Amount</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input class="form-input currency" type="number" id="purchase-amount" min="0" placeholder="e.g. 130000" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="purchase-months">Timeline (months)</label>
+              <input class="form-input" type="number" id="purchase-months" min="1" max="60" value="12" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="purchase-emi-rate">EMI Interest Rate (% p.a.)</label>
+              <input class="form-input" type="number" id="purchase-emi-rate" min="0" max="36" step="0.5" value="12" />
+            </div>
+          </div>
+          <div class="form-group mt-2">
+            <label class="form-label" for="purchase-emi-months">
+              EMI Tenure: <span id="emi-months-label" style="color:var(--accent-blue); font-weight:700;">12 months</span>
+            </label>
+            <input type="range" id="purchase-emi-months" min="3" max="60" step="3" value="12" />
+          </div>
+          <div class="mt-3">
+            <button class="btn btn-primary" id="btn-analyze-purchase">
+              🔍 &nbsp; Analyze Purchase Options
+            </button>
+          </div>
+        </div>
+
+        <!-- Scenarios -->
+        <div id="scenarios-section" class="hidden">
+          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:0.25rem;">Scenario Comparison</h3>
+          <p style="color:var(--text-secondary); font-size:0.82rem; margin-bottom:1.25rem;">Each card shows a 12-month balance projection, safety score, and key metrics for that payment strategy.</p>
+          <div class="scenarios-grid" id="scenarios-grid"></div>
+        </div>
+
+        <!-- AI Advisor Panel -->
+        <div id="advisor-panel" class="advisor-panel hidden">
+          <div class="advisor-header">
+            <div class="advisor-avatar">🤖</div>
+            <div>
+              <div class="advisor-name">FinSage Advisor</div>
+              <div class="advisor-role">AI Financial Risk Analyst</div>
+            </div>
+          </div>
+
+          <div class="advisor-body">
+            <div id="advisor-reasoning"></div>
+          </div>
+
+          <div class="advisor-recommendation mt-3">
+            <div class="rec-title">✅ My Recommendation</div>
+            <div class="rec-text" id="advisor-rec-text"></div>
+          </div>
+
+          <div id="advisor-conditions"></div>
+        </div>
+      </div>
+
+    </section>
+    <!-- ─────────────────────────────────────────────────────────────────── -->
+
+  </main>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
