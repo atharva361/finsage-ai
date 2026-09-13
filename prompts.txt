@@ -1,0 +1,14 @@
+============================================================
+  ALL MY PROMPTS - FinSage AI Project
+  Conversation started: 2026-09-13
+============================================================
+
+[1] 2026-09-13 | Prompt:
+    "make a csv file on github"
+
+[2] 2026-09-13 | Prompt:
+    "make a filr of txt in that what ever i prompt include all"
+
+============================================================
+  END OF PROMPTS
+============================================================
