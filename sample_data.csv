@@ -1,0 +1,16 @@
+id,name,email,age,city,country,signup_date
+1,Alice Johnson,alice.johnson@example.com,28,New York,USA,2024-01-15
+2,Bob Smith,bob.smith@example.com,34,London,UK,2024-02-03
+3,Carol Williams,carol.williams@example.com,22,Toronto,Canada,2024-02-18
+4,David Brown,david.brown@example.com,45,Sydney,Australia,2024-03-07
+5,Emma Davis,emma.davis@example.com,31,Berlin,Germany,2024-03-22
+6,Frank Miller,frank.miller@example.com,27,Paris,France,2024-04-10
+7,Grace Wilson,grace.wilson@example.com,38,Tokyo,Japan,2024-04-25
+8,Henry Moore,henry.moore@example.com,52,Mumbai,India,2024-05-14
+9,Isla Taylor,isla.taylor@example.com,24,São Paulo,Brazil,2024-05-30
+10,James Anderson,james.anderson@example.com,41,Dubai,UAE,2024-06-08
+11,Karen Thomas,karen.thomas@example.com,29,Seoul,South Korea,2024-06-19
+12,Liam Jackson,liam.jackson@example.com,36,Mexico City,Mexico,2024-07-02
+13,Mia White,mia.white@example.com,23,Amsterdam,Netherlands,2024-07-15
+14,Noah Harris,noah.harris@example.com,48,Chicago,USA,2024-07-28
+15,Olivia Martin,olivia.martin@example.com,33,Madrid,Spain,2024-08-05
